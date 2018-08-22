@@ -1,4 +1,29 @@
 var urlLink;
+
+function saveLink(folder, valueObj) {
+    var timestamp = new Date().getTime();
+    chrome.storage.local.get(folder, function (data) {
+        var folderObj = data[folder];
+
+        folderObj[timestamp] = valueObj;
+
+        chrome.storage.local.set({
+            [folder]: folderObj
+        }, function () {
+            window.close();
+        })
+    });
+
+}
+
+function createObj(link, desc) {
+    var obj = {
+        link: link,
+        desc: desc
+    }
+    return obj;
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     //add link to p 
@@ -9,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     //add categories to group
-    chrome.storage.sync.get('categories', function (data) {
+    chrome.storage.local.get('categories', function (data) {
         var group = document.getElementById("group");
         for (let i = 0; i < data.categories.length; i++) {
             var btn = document.createElement("button");
@@ -17,13 +42,16 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.setAttribute('class', "folders")
             btn.onclick = function () {
                 var desc = document.getElementById("description");
-                alert(desc.value);
+                saveLink(data.categories[i], createObj(urlLink, desc.value));
             }
             btn.appendChild(document.createTextNode(data.categories[i]));
             group.appendChild(btn);
         }
-
-
     });
+
+    var options = document.getElementById('settingsBtn');
+    options.onclick = function () {
+        chrome.tabs.create({ url: "options.html" });
+    }
 });
 

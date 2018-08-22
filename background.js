@@ -1,12 +1,19 @@
 chrome.runtime.onInstalled.addListener(function () {
-    chrome.storage.sync.get('categories', function (data) {
+    chrome.storage.local.get('categories', function (data) {
         if (!data.categories) {
-            chrome.storage.sync.set({
+            chrome.storage.local.set({
                 categories: [
                     "Read Later",
                     "Important",
                     "Good Read"
-                ]
+                ],
+                "Read Later":{
+                },
+                "Important":{
+                },
+                "Good Read":{
+                },
+                
             }, function () {
                 console.log("Created categories, first install")
             });
