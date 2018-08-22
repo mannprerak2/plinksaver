@@ -1,16 +1,15 @@
 chrome.runtime.onInstalled.addListener(function () {
-    chrome.storage.sync.set({ categories: [
-        {}
-    ] }, function () {
-        console.log("Created color var");
-    });
-    chrome.declarativeContent.onPageChanged.removeRules(undefined, function () {
-        chrome.declarativeContent.onPageChanged.addRules([{
-            conditions: [new chrome.declarativeContent.PageStateMatcher({
-                pageUrl: { hostEquals: 'developer.chrome.com' },
-            })
-            ],
-            actions: [new chrome.declarativeContent.ShowPageAction()]
-        }]);
+    chrome.storage.sync.get('categories', function (data) {
+        if (!data.categories) {
+            chrome.storage.sync.set({
+                categories: [
+                    "Read Later",
+                    "Important",
+                    "Good Read"
+                ]
+            }, function () {
+                console.log("Created categories, first install")
+            });
+        }
     });
 });
