@@ -16,10 +16,11 @@ function saveLink(folder, valueObj) {
 
 }
 
-function createObj(link, desc) {
+function createObj(link, desc) {//the key is the timestamp of when object was created
     var obj = {
         link: link,
-        desc: desc
+        desc: desc,
+        visited: false
     }
     return obj;
 }
@@ -51,7 +52,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var options = document.getElementById('settingsBtn');
     options.onclick = function () {
-        chrome.tabs.create({ url: "options.html" });
+        if (chrome.runtime.openOptionsPage) {
+            chrome.runtime.openOptionsPage();
+        } else {
+            window.open(chrome.runtime.getURL('options.html'));
+        }
     }
 });
 
