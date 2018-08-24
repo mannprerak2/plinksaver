@@ -1,4 +1,4 @@
-
+var content;
 //functions start here ====================================================
 
 //UI changes for currently active tab ( sets class to active )
@@ -60,7 +60,6 @@ function createLinkCard(key, linkObj, folder) {
 
 //clears the list of links in content div
 function clearList() {
-    var content = document.getElementById("content");
     content.innerHTML = "";
 }
 
@@ -78,7 +77,6 @@ function renderList(activeTabId) {
         chrome.storage.local.get(activeTabId, function (data) {
             //activeTabId is folder name
             var ids = data[activeTabId];
-            var content = document.getElementById("content");
             for (var key in ids) {
                 content.appendChild(createLinkCard(key, ids[key], activeTabId));
             }
@@ -87,10 +85,9 @@ function renderList(activeTabId) {
 }
 
 //puts result ui in content
-function addResultText(searchtxt){
-    var content = document.getElementById('content');
+function addResultText(searchtxt) {
     var result = document.createElement("h3");
-    result.appendChild(document.createTextNode("Results for "+searchtxt));
+    result.appendChild(document.createTextNode("Results for " + searchtxt));
     content.appendChild(result);
 }
 
@@ -99,8 +96,7 @@ function renderSearchList(activeTabId, searchtxt) {
     chrome.storage.local.get(activeTabId, function (data) {
         //activeTabId is folder name
         var ids = data[activeTabId];
-        var content = document.getElementById("content");
-        
+
         for (var key in ids) {
             if (ids[key].desc.includes(searchtxt)) {
                 content.appendChild(createLinkCard(key, ids[key], activeTabId));
@@ -116,6 +112,8 @@ function renderSearchList(activeTabId, searchtxt) {
 //script starts HERE ==========================================================
 
 document.addEventListener('DOMContentLoaded', function () {
+
+    content = document.getElementById('content');
 
     //loading tabs
     chrome.storage.local.get('categories', function (data) {
@@ -163,6 +161,36 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 else {
                     alert("Category Already exists, try a new name...");
+                }
+            }
+        }
+
+        //Handle the delete button
+        var deleteBtn = document.getElementById('deleteBtn');
+        deleteBtn.onclick = function () {
+            var catName = prompt("Enter Category Name to delete", "Untitled");
+
+            if (catName != null && catName != "") {
+                //check if category doesnt already exists
+                if (data.categories.indexOf(catName) < 0 || catName == "All" || catName == "all") {
+                    alert("Category doesn't exists...");
+                }
+                else {
+                    var newCat = [];
+                    for (let i = 0; i < data.categories.length; i++) {
+                        if (data.categories[i] != catName) {
+                            newCat.push(data.categories[i]);
+                        }
+                    }
+
+                    data.categories = newCat;
+                    data[catName] = {};
+                    chrome.storage.local.set(data, function () {
+                        //refresh page after this operation to reload categories
+                        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                            chrome.tabs.update(tabs[0].id, { url: tabs[0].url });
+                        });
+                    });//update categories
                 }
             }
         }
