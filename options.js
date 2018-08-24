@@ -80,6 +80,19 @@ function renderList(activeTabId) {
     }
 }
 
+function renderSearchList(activeTabId, searchtxt) {
+    chrome.storage.local.get(activeTabId, function (data) {
+        //activeTabId is folder name
+        var ids = data[activeTabId];
+        var content = document.getElementById("content");
+        for (var key in ids) {
+            if (ids[key].desc.includes(searchtxt)) {
+                content.appendChild(createLinkCard(key, ids[key], activeTabId));
+            }
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     //load tabs
@@ -112,9 +125,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (person != null && person != "") {
                 //check if category doesnt already exists
-                if (data.categories.indexOf(person) < 0 || person == "All") {
+                if (data.categories.indexOf(person) < 0 || person == "All" || person == "all") {
                     data.categories.push(person);
-                    data[person]={};
+                    data[person] = {};
                     chrome.storage.local.set(data, function () {
                         //refresh page after this operation
                         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -123,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });//update categories
                 }
                 else {
-                    alert("Category Already exists, try a new name...")
+                    alert("Category Already exists, try a new name...");
                 }
             }
         }
@@ -133,3 +146,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 });
+
+var searchBtn = document.getElementById("searchBtn");
+searchBtn.onclick = function () {
+    var searchInput = document.getElementById("searchInput");
+    var activeTabId = document.getElementsByClassName("active")[0];
+
+    clearList();
+
+    if (activeTabId == "all") {
+        chrome.storage.local.get('categories', function (data) {
+            for (let i = 0; i < data.categories.length; i++) {
+                renderSearchList(data.categories[i], searchInput.value);
+            }
+        })
+    }
+    else {
+        renderSearchList(activeTabId, searchInput.value);
+    }
+}
