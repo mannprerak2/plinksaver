@@ -108,7 +108,24 @@ document.addEventListener('DOMContentLoaded', function () {
         //for adding a category
         var plus = document.getElementById("plusBtn");
         plus.onclick = function () {
-            
+            var person = prompt("Enter Category Name", "Untitled");
+
+            if (person != null && person != "") {
+                //check if category doesnt already exists
+                if (data.categories.indexOf(person) < 0 || person == "All") {
+                    data.categories.push(person);
+                    data[person]={};
+                    chrome.storage.local.set(data, function () {
+                        //refresh page after this operation
+                        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+                            chrome.tabs.update(tabs[0].id, { url: tabs[0].url });
+                        });
+                    });//update categories
+                }
+                else {
+                    alert("Category Already exists, try a new name...")
+                }
+            }
         }
 
         renderList("all");//for initialising
