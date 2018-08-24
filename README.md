@@ -22,33 +22,45 @@ A google chrome extension to save links in an elite way :)
 
   * ### Parent Object ###
     {
+    
       categories : ["cat 1", "cat 2",...],
+      
       cat 1: {
 
       }
+      
       cat 2: {
 
       }
+      
       .
       .
       .
+      
     }
     
   * ### Cat object ###
     {
+    
       linkObj 1: {
       
       }
+      
       linkObj 2: {
       
       }
+      
       .
       .
       .
+      
     }  
     
   * ### linkObj object ###
     {
+    
       link : "website url from browser",
+      
       desc: "some description by user"
+      
     }
