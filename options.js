@@ -86,12 +86,21 @@ function renderList(activeTabId) {
     }
 }
 
+//puts result ui in content
+function addResultText(searchtxt){
+    var content = document.getElementById('content');
+    var result = document.createElement("h3");
+    result.appendChild(document.createTextNode("Results for "+searchtxt));
+    content.appendChild(result);
+}
+
 //adds link objects to UI based on search term.
 function renderSearchList(activeTabId, searchtxt) {
     chrome.storage.local.get(activeTabId, function (data) {
         //activeTabId is folder name
         var ids = data[activeTabId];
         var content = document.getElementById("content");
+        
         for (var key in ids) {
             if (ids[key].desc.includes(searchtxt)) {
                 content.appendChild(createLinkCard(key, ids[key], activeTabId));
@@ -166,9 +175,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var searchBtn = document.getElementById("searchBtn");
     searchBtn.onclick = function () {
         var searchInput = document.getElementById("searchInput");
-        var activeTabId = document.getElementsByClassName("active")[0];
+        var activeTabId = document.getElementsByClassName("active")[0].id;
 
         clearList();
+
+        addResultText(searchInput.value);
 
         if (activeTabId == "all") {
             chrome.storage.local.get('categories', function (data) {
