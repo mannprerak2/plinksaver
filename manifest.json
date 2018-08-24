@@ -1,11 +1,11 @@
 {
-    "name": "pLink",
+    "name": "PLinkSaver",
     "version": "1.0",
-    "description": "Save links in an organised way, add optional description ",
+    "description": "Save links in an elite way :) ",
     "permissions": ["tabs","storage","unlimitedStorage"],
     "background": {
         "scripts": ["background.js"],
-        "persistent": true
+        "persistent": false
     },
     "options_page": "options.html",
     "browser_action": {

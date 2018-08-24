@@ -1,3 +1,7 @@
+
+//functions start here ====================================================
+
+//UI changes for currently active tab ( sets class to active )
 function activateTab(id) {
     //remove active from all
     var tabs = document.getElementById("tabArea").children;
@@ -13,17 +17,17 @@ function activateTab(id) {
 
 }
 
+//deleting link from storage
 function deleteLink(key, folder) {
-
     chrome.storage.local.get(folder, function (data) {
         delete data[folder][key];
         chrome.storage.local.set({
             [folder]: data[folder]
         })
     });
-
 }
 
+//returns js div object to use 
 function createLinkCard(key, linkObj, folder) {
     var card = document.createElement("div");
     var link = document.createElement("a");
@@ -54,14 +58,16 @@ function createLinkCard(key, linkObj, folder) {
     return card;
 }
 
+//clears the list of links in content div
 function clearList() {
     var content = document.getElementById("content");
     content.innerHTML = "";
 }
 
+//adds link Objects to UI content div depending on active tab id
 function renderList(activeTabId) {
     clearList();
-    if (activeTabId == "all") {
+    if (activeTabId == "all") { // loop for all categories and call this function again
         chrome.storage.local.get("categories", function (data) {
             for (let i = 0; i < data.categories.length; i++) {
                 renderList(data.categories[i]);
@@ -80,6 +86,7 @@ function renderList(activeTabId) {
     }
 }
 
+//adds link objects to UI based on search term.
 function renderSearchList(activeTabId, searchtxt) {
     chrome.storage.local.get(activeTabId, function (data) {
         //activeTabId is folder name
@@ -93,11 +100,20 @@ function renderSearchList(activeTabId, searchtxt) {
     });
 }
 
+//functions end here ==========================================
+
+//==============================================================
+
+//script starts HERE ==========================================================
+
 document.addEventListener('DOMContentLoaded', function () {
 
-    //load tabs
+    //loading tabs
     chrome.storage.local.get('categories', function (data) {
+
         var tabArea = document.getElementById("tabArea");
+
+        //add the 'all' button first to tabArea div
         var allbtn = document.createElement("button");
         allbtn.setAttribute('id', "all");
         allbtn.setAttribute('class', "tabLinks, active");
@@ -107,6 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
         allbtn.appendChild(document.createTextNode("All"));
         tabArea.appendChild(allbtn);
 
+        //add remaining categories to tabArea div
         for (let i = 0; i < data.categories.length; i++) {
             var btn = document.createElement("button");
             btn.setAttribute('id', data.categories[i]);
@@ -118,18 +135,18 @@ document.addEventListener('DOMContentLoaded', function () {
             tabArea.appendChild(btn);
         }
 
-        //for adding a category
+        //Add the "+ Add New" button to tabArea div
         var plus = document.getElementById("plusBtn");
         plus.onclick = function () {
-            var person = prompt("Enter Category Name", "Untitled");
+            var catName = prompt("Enter Category Name", "Untitled");
 
-            if (person != null && person != "") {
+            if (catName != null && catName != "") {
                 //check if category doesnt already exists
-                if (data.categories.indexOf(person) < 0 || person == "All" || person == "all") {
-                    data.categories.push(person);
-                    data[person] = {};
+                if (data.categories.indexOf(catName) < 0 || catName == "All" || catName == "all") {
+                    data.categories.push(catName);
+                    data[catName] = {};
                     chrome.storage.local.set(data, function () {
-                        //refresh page after this operation
+                        //refresh page after this operation to reload categories
                         chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
                             chrome.tabs.update(tabs[0].id, { url: tabs[0].url });
                         });
@@ -141,27 +158,30 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
+        //the all category is selected by default so render all links to content div
         renderList("all");//for initialising
     });
+
+    //adding search logic
+    var searchBtn = document.getElementById("searchBtn");
+    searchBtn.onclick = function () {
+        var searchInput = document.getElementById("searchInput");
+        var activeTabId = document.getElementsByClassName("active")[0];
+
+        clearList();
+
+        if (activeTabId == "all") {
+            chrome.storage.local.get('categories', function (data) {
+                for (let i = 0; i < data.categories.length; i++) {
+                    renderSearchList(data.categories[i], searchInput.value);
+                }
+            })
+        }
+        else {
+            renderSearchList(activeTabId, searchInput.value);
+        }
+    }
 
 
 });
 
-var searchBtn = document.getElementById("searchBtn");
-searchBtn.onclick = function () {
-    var searchInput = document.getElementById("searchInput");
-    var activeTabId = document.getElementsByClassName("active")[0];
-
-    clearList();
-
-    if (activeTabId == "all") {
-        chrome.storage.local.get('categories', function (data) {
-            for (let i = 0; i < data.categories.length; i++) {
-                renderSearchList(data.categories[i], searchInput.value);
-            }
-        })
-    }
-    else {
-        renderSearchList(activeTabId, searchInput.value);
-    }
-}
