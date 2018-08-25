@@ -20,7 +20,6 @@ function createObj(link, desc) {//the key is the timestamp of when object was cr
     var obj = {
         link: link,
         desc: desc,
-        visited: false
     }
     return obj;
 }

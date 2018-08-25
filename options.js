@@ -58,6 +58,8 @@ function createLinkCard(key, linkObj, folder) {
     var desc = document.createElement("p");
     var del = document.createElement("p");
     var edit = document.createElement("p");
+    var date = document.createElement("p");
+
 
     link.appendChild(document.createTextNode(linkObj.link));
     link.setAttribute("href", linkObj.link);
@@ -78,12 +80,19 @@ function createLinkCard(key, linkObj, folder) {
         editLink(key, folder);
     }
 
+    var ts = new Date();
+    ts.setTime(key);
+
+    date.appendChild(document.createTextNode(ts.toDateString() +", "+ ts.toLocaleTimeString()));
+    date.setAttribute('class', "date");
+
     card.setAttribute('class', "card");
     card.setAttribute('id', key);
     card.appendChild(link);
     card.appendChild(desc);
     card.appendChild(del);
     card.appendChild(edit);
+    card.appendChild(date);
 
 
 
