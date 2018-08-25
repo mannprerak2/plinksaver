@@ -17,6 +17,14 @@ function activateTab(id) {
 
 }
 
+//page reload
+function refreshPage() {
+    //refresh page after this operation to reload categories
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.update(tabs[0].id, { url: tabs[0].url });
+    });
+}
+
 //deleting link from storage
 function deleteLink(key, folder) {
     chrome.storage.local.get(folder, function (data) {
@@ -27,12 +35,29 @@ function deleteLink(key, folder) {
     });
 }
 
+//editing link in storage and Ui
+function editLink(key, folder) {
+
+    chrome.storage.local.get(folder, function (data) {
+        var desc = data[folder][key].desc;
+
+        var newDesc = prompt("Edit the description", desc);
+
+        if (newDesc != null) {
+            data[folder][key].desc = newDesc;
+            chrome.storage.local.set(data, function () {
+                refreshPage();
+            });
+        }
+    });
+}
 //returns js div object to use 
 function createLinkCard(key, linkObj, folder) {
     var card = document.createElement("div");
     var link = document.createElement("a");
     var desc = document.createElement("p");
     var del = document.createElement("p");
+    var edit = document.createElement("p");
 
     link.appendChild(document.createTextNode(linkObj.link));
     link.setAttribute("href", linkObj.link);
@@ -41,10 +66,16 @@ function createLinkCard(key, linkObj, folder) {
     desc.appendChild(document.createTextNode(linkObj.desc));
 
     del.appendChild(document.createTextNode("Delete"));
-    del.setAttribute('class', "delete")
+    del.setAttribute('class', "delete");
     del.onclick = function () {
         deleteLink(key, folder);
         document.getElementById(key).remove();
+    }
+
+    edit.appendChild(document.createTextNode("Edit"));
+    edit.setAttribute('class', "edit");
+    edit.onclick = function () {
+        editLink(key, folder);
     }
 
     card.setAttribute('class', "card");
@@ -52,6 +83,7 @@ function createLinkCard(key, linkObj, folder) {
     card.appendChild(link);
     card.appendChild(desc);
     card.appendChild(del);
+    card.appendChild(edit);
 
 
 
@@ -153,10 +185,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     data.categories.push(catName);
                     data[catName] = {};
                     chrome.storage.local.set(data, function () {
-                        //refresh page after this operation to reload categories
-                        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-                            chrome.tabs.update(tabs[0].id, { url: tabs[0].url });
-                        });
+                        refreshPage();
                     });//update categories
                 }
                 else {
@@ -186,10 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     data.categories = newCat;
                     data[catName] = {};
                     chrome.storage.local.set(data, function () {
-                        //refresh page after this operation to reload categories
-                        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-                            chrome.tabs.update(tabs[0].id, { url: tabs[0].url });
-                        });
+                        refreshPage();
                     });//update categories
                 }
             }
