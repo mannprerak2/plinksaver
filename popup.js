@@ -16,21 +16,26 @@ function saveLink(folder, valueObj) {
 
 }
 
-function createObj(link, desc) {//the key is the timestamp of when object was created
+function createObj(link, title, desc) {//the key is the timestamp of when object was created
     var obj = {
         link: link,
+        title: title,
         desc: desc,
     }
     return obj;
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-
+    var titleTxt ="";
     //add link to p 
     chrome.tabs.getSelected(null, function (tab) {
         var link = document.getElementById("link");
         urlLink = tab.url;
         link.appendChild(document.createTextNode(tab.url));
+
+        var title = document.getElementById("title");
+        titleTxt = tab.title;
+        title.appendChild(document.createTextNode(titleTxt));
     });
 
     //add categories to group
@@ -42,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.setAttribute('class', "folders")
             btn.onclick = function () {
                 var desc = document.getElementById("description");
-                saveLink(data.categories[i], createObj(urlLink, desc.value));
+                saveLink(data.categories[i], createObj(urlLink, titleTxt, desc.value));
             }
             btn.appendChild(document.createTextNode(data.categories[i]));
             group.appendChild(btn);

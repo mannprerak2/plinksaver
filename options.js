@@ -55,6 +55,7 @@ function editLink(key, folder) {
 function createLinkCard(key, linkObj, folder) {
     var card = document.createElement("div");
     var link = document.createElement("a");
+    var title = document.createElement("p");
     var desc = document.createElement("p");
     var del = document.createElement("p");
     var edit = document.createElement("p");
@@ -63,7 +64,10 @@ function createLinkCard(key, linkObj, folder) {
 
     link.appendChild(document.createTextNode(linkObj.link));
     link.setAttribute("href", linkObj.link);
-    link.setAttribute("target", "_blank")
+    link.setAttribute("target", "_blank");
+
+    title.appendChild(document.createTextNode(linkObj.title));
+    title.setAttribute('class','title');
 
     desc.appendChild(document.createTextNode(linkObj.desc));
 
@@ -88,6 +92,7 @@ function createLinkCard(key, linkObj, folder) {
 
     card.setAttribute('class', "card");
     card.setAttribute('id', key);
+    card.appendChild(title)
     card.appendChild(link);
     card.appendChild(desc);
     card.appendChild(del);
