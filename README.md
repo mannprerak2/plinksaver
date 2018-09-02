@@ -1,14 +1,12 @@
 Plinksaver
 =============
-A google chrome extension to save links in an elite way :)
+A google chrome extension to save links locally with a description
 
 ## Features ##
-- [ ] Save links to google drive
 - [x] Organise links in user created categories
 - [x] Give description to a link
 - [x] View all links in an organised way
-- [ ] View stats of links
-- [ ] Full text search
+- [x] Simple search
 
 ## Installation ##
 1. Download zip file of this repo and unzip to desired location
