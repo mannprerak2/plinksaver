@@ -8,6 +8,11 @@ A google chrome extension to save links locally with a description
 - [x] View all links in an organised way
 - [x] Simple search
 
+## SCREENSHOTS ##
+![Popup](./screenshots/ex-popup.png?raw=true "Extension Popup (for saving a link)")
+![Options](/screenshots/ex-options.png?raw=true "Extension Options (for viewing saved links)")
+
+
 ## Installation ##
 1. Download zip file of this repo and unzip to desired location
 2. In google chrome go to chrome://extensions/
