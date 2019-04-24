@@ -1,8 +1,8 @@
 {
     "name": "PLinkSaver",
     "version": "1.0",
-    "description": "Save links in an elite way :) ",
-    "permissions": ["tabs","storage","unlimitedStorage"],
+    "description": "Save links and sessions as bookmarks :) ",
+    "permissions": ["tabs","bookmarks"],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
