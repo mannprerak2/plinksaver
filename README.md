@@ -1,17 +1,17 @@
-Plinksaver
+pLinksaver
 =============
 A google chrome extension to save links and sessions in a new bookmark folder.
 
 ## Features ##
+- [x] Access sessions and link from everywhere (just go to the pLink bookmarks folder) 
 - [] Save Links in pLinks folder
-- [] Save / Restore sessions easily from popup
+- [x] Save / Restore sessions easily from extension popup
 - [] Search, Import, Export pLink bookmarks 
-- [] Redefined New Tab to quickly open sessions and previous bookmarks
 
 NOTE: everything is done inside a new bookmark folder called - pLinks
 
 ## SCREENSHOTS ##
-
+![Popup](./screenshots/ex-popup.png?raw=true "Extension Popup")
 
 ## Installation ##
 1. Download zip file of this repo and unzip to desired location
