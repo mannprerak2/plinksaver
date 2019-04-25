@@ -1,20 +1,31 @@
+var dt = new Date();
+
+document.getElementById('session-title').value = `Session ${dt.getFullYear()}/${dt.getMonth() + 1}/${dt.getDate()}, ${dt.getHours()}:${dt.getMinutes()}:${dt.getSeconds()}`;
+
 
 document.getElementById("save-session").onclick = function () {
-    var title = document.getElementById('session-title');
+    var sesName = document.getElementById('session-title').value;
 
+    if (sesName === "") {
+        alert("Session name cannot be empty");
+        return;
+    }
     // get folders on root
     chrome.bookmarks.getChildren('0', function (children1) {
-        children1.forEach(function (child1) {
+        for (var i = 0; i < children1.length; i++) {
+            var child1 = children1[i];
             if (child1.title == 'Other bookmarks') {
                 chrome.bookmarks.getChildren(child1.id, function (children2) {
-                    children2.forEach(function (child2) {
+                    for (var j = 0; j < children2.length; j++) {
+                        var child2 = children2[j];
                         if (child2.title == 'pLink bookmarks') {
                             chrome.bookmarks.getChildren(child2.id, function (children3) {
-                                children3.forEach(function (child3) {
+                                for (var k = 0; k < children3.length; k++) {
+                                    var child3 = children3[k];
                                     if (child3.title == 'Sessions') {
                                         chrome.bookmarks.create({
                                             'parentId': child3.id,
-                                            'title': 'new session',
+                                            'title': sesName,
                                         }, function (newFolder) {
                                             //query all tabs
                                             chrome.tabs.query({
@@ -31,18 +42,60 @@ document.getElementById("save-session").onclick = function () {
                                                 });
                                             });
                                         });
+                                        break;
                                     }
-                                });
+                                }
                             });
+                            break;
                         }
-                    });
+                    }
                 });
+                break;
             }
-        });
+        }
     });
 }
 
 document.getElementById("restore-session").onclick = function () {
-    console.log("click restore-session");
+    // get folders on root
+    chrome.bookmarks.getChildren('0', function (children1) {
+        for (var i = 0; i < children1.length; i++) {
+            var child1 = children1[i];
+            if (child1.title == 'Other bookmarks') {
+                chrome.bookmarks.getChildren(child1.id, function (children2) {
+                    for (var j = 0; j < children2.length; j++) {
+                        var child2 = children2[j];
+                        if (child2.title == 'pLink bookmarks') {
+                            chrome.bookmarks.getChildren(child2.id, function (children3) {
+                                for (var k = 0; k < children3.length; k++) {
+                                    var child3 = children3[k];
+                                    if (child3.title == 'Sessions') {
+                                        //get all sessions
+                                        chrome.bookmarks.getChildren(child3.id, function (children4) {
+                                            // get the last saved session
+                                            if (children4.length = 0)
+                                                return;
+                                            chrome.bookmarks.getChildren(children4[children4.length - 1].id, function (children5) {
+                                                children5.forEach(function (child4) {
+                                                    chrome.tabs.create(
+                                                        {
+                                                            url: child4.url
+                                                        }
+                                                    );
+                                                });
+                                            });
+                                        });
+                                        break;
+                                    }
+                                }
+                            });
+                            break;
+                        }
+                    }
+                });
+                break;
+            }
+        }
+    });
 }
 
