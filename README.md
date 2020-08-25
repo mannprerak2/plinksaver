@@ -1,3 +1,6 @@
+This repo is no longer maintained.
+# Please checkout [PutAway](https://github.com/mannprerak2/putaway).
+
 pLinksaver
 =============
 A google chrome extension to save links and sessions in a new bookmark folder.
